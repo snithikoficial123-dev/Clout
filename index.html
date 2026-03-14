@@ -1,0 +1,32 @@
+async function generateAd() {
+    const promptValue = document.getElementById('prompt').value;
+    const headline = document.getElementById('ad-headline');
+    const body = document.getElementById('ad-body');
+    const output = document.getElementById('output');
+
+    if(!promptValue) return alert('Drop a prompt first!');
+
+    output.classList.remove('hidden');
+    headline.innerText = "Cooking...";
+    body.innerText = "The AI is thinking...";
+
+    try {
+        // This calls the Gemini API directly
+        const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyDZKFdktIngCjBcHAVH_EzK7M3_zafbhiI', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: "Write a short, catchy Gen Z style ad for: " + promptValue }] }]
+            })
+        });
+
+        const data = await response.json();
+        const aiText = data.candidates[0].content.parts[0].text;
+        
+        headline.innerText = "vibe secured.";
+        body.innerText = aiText;
+    } catch (error) {
+        headline.innerText = "L + Ratio";
+        body.innerText = "Something went wrong. Check your API key.";
+    }
+}
